@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Reports — SportX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="page-wrapper">
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a th:href="@{/}" class="navbar-brand">⚡ Sport<span>X</span></a>
+    <ul class="navbar-nav">
+      <li><a th:href="@{/owner/dashboard}" class="nav-link">← Dashboard</a></li>
+      <li><a th:href="@{/auth/logout}" class="btn btn-gray btn-sm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="page-header">
+      <h1>Reports — <span class="text-accent" th:text="${venue.name}">Venue</span></h1>
+      <p>Revenue and booking analytics for this venue.</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value text-accent">₹<span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')}">0</span></div>
+        <div class="stat-sub">Confirmed bookings only</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Bookings</div>
+        <div class="stat-value" th:text="${totalBookings}">0</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Rating</div>
+        <div class="stat-value">
+          <span th:text="${#numbers.formatDecimal(venue.avgRating, 1, 1)}">0.0</span>
+          <span style="font-size:1rem; color:var(--warning);">★</span>
+        </div>
+        <div class="stat-sub">Based on reviews</div>
+      </div>
+    </div>
+
+    <!-- Booking Breakdown by Status -->
+    <div class="grid-2 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="mb-2">Booking Status Breakdown</h3>
+          <div th:with="confirmed=${#lists.size(bookings.?[status.name() == 'CONFIRMED'])},
+                        cancelled=${#lists.size(bookings.?[status.name() == 'CANCELLED'])},
+                        pending=${#lists.size(bookings.?[status.name() == 'PENDING'])}">
+            <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-100);">
+              <span class="badge badge-green">CONFIRMED</span>
+              <strong th:text="${confirmed}">0</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-100);">
+              <span class="badge badge-yellow">PENDING</span>
+              <strong th:text="${pending}">0</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:10px 0;">
+              <span class="badge badge-red">CANCELLED</span>
+              <strong th:text="${cancelled}">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h3 class="mb-2">Venue Info</h3>
+          <div style="font-size:14px; line-height:2.2; color:var(--gray-600);">
+            <div>📍 <span th:text="${venue.address}">Address</span>, <span th:text="${venue.city}">City</span></div>
+            <div>🏟️ Venue ID: <strong th:text="${venue.venueId}">VEN-XXX</strong></div>
+            <div>
+              ✅ Status:
+              <span class="badge" th:classappend="${venue.verified} ? 'badge-green' : 'badge-yellow'"
+                    th:text="${venue.verified} ? 'Verified' : 'Pending'">Status</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Bookings Table -->
+    <div class="card">
+      <div class="card-body">
+        <h3 class="mb-3">All Bookings</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Player</th>
+                <th>Court</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="b : ${bookings}">
+                <td class="fw-semibold" th:text="${b.bookingId}">BKG-XXX</td>
+                <td th:text="${b.player.name}">Player</td>
+                <td th:text="${b.slot.court.courtName}">Court</td>
+                <td th:text="${#temporals.format(b.slot.startTime,'dd MMM yyyy, HH:mm')}">Date</td>
+                <td class="fw-bold text-accent">₹<span th:text="${b.totalAmount}">0</span></td>
+                <td>
+                  <span class="badge"
+                        th:classappend="${b.status.name() == 'CONFIRMED'} ? 'badge-green' :
+                                        (${b.status.name() == 'CANCELLED'} ? 'badge-red' : 'badge-yellow')"
+                        th:text="${b.status}">Status</span>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(bookings)}">
+                <td colspan="6" class="text-center" style="padding:32px; color:var(--gray-400);">
+                  No bookings yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><p>© 2025 <span style="color:var(--accent);">SportX</span></p></footer>
+</body>
+</html>
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Courts — SportX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="page-wrapper">
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a th:href="@{/}" class="navbar-brand">⚡ Sport<span>X</span></a>
+    <ul class="navbar-nav">
+      <li><a th:href="@{/player/dashboard}" class="nav-link">Dashboard</a></li>
+      <li><a th:href="@{/player/search}" class="nav-link active">Find Courts</a></li>
+      <li><a th:href="@{/player/bookings}" class="nav-link">My Bookings</a></li>
+      <li><a th:href="@{/auth/logout}" class="btn btn-gray btn-sm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="page-header">
+      <h1>Find Courts</h1>
+      <p>Search verified venues and book your slot instantly.</p>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form th:action="@{/player/search}" method="get">
+          <div class="grid-3" style="align-items:end;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">City / Area</label>
+              <input type="text" name="city" class="form-control"
+                     placeholder="e.g. Bangalore"
+                     th:value="${selectedCity}"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Sport</label>
+              <select name="sport" class="form-control">
+                <option value="">All Sports</option>
+                <option th:each="s : ${sportTypes}"
+                        th:value="${s}" th:text="${s}"
+                        th:selected="${s == selectedSport}">Sport</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search Venues</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="flex-between mb-3">
+      <h3><span th:text="${#lists.size(venues)}">0</span> Venues Found</h3>
+    </div>
+
+    <div class="venues-grid">
+      <div th:each="venue : ${venues}" class="venue-card">
+        <img th:src="${venue.imageUrl}" th:alt="${venue.name}" class="venue-card-img"
+             onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800'"/>
+        <div class="venue-card-body">
+          <div class="venue-card-name" th:text="${venue.name}">Name</div>
+          <div class="venue-card-city">📍 <span th:text="${venue.city}">City</span></div>
+          <div class="venue-card-tags">
+            <span th:each="sport : ${venue.sportTypes}" class="sport-tag" th:text="${sport}">Sport</span>
+          </div>
+          <div class="venue-card-footer">
+            <div class="rating">
+              <span class="stars">★</span>
+              <span class="rating-num" th:text="${#numbers.formatDecimal(venue.avgRating, 1, 1)}">4.5</span>
+            </div>
+            <a th:href="@{/player/venue/{id}(id=${venue.venueId})}" class="btn btn-primary btn-sm">View Courts</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(venues)}"
+         style="text-align:center; padding:64px; color:var(--gray-400);">
+      <p style="font-size:2rem; margin-bottom:12px;">🏟️</p>
+      <h3 style="color:var(--gray-600); margin-bottom:8px;">No venues found</h3>
+      <p>Try a different city or sport filter.</p>
+    </div>
+  </div>
+</main>
+
+<footer><p>© 2025 <span style="color:var(--accent);">SportX</span></p></footer>
+</body>
+</html>
+

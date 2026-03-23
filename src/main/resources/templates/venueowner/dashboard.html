@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Owner Dashboard — SportX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="page-wrapper">
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a th:href="@{/}" class="navbar-brand">⚡ Sport<span>X</span></a>
+    <ul class="navbar-nav">
+      <li><a th:href="@{/owner/dashboard}" class="nav-link active">Dashboard</a></li>
+      <li><a th:href="@{/owner/venue/add}" class="nav-link">Add Venue</a></li>
+      <li><a th:href="@{/auth/logout}" class="btn btn-gray btn-sm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}"   class="alert alert-error"   th:text="${errorMsg}"></div>
+
+    <div class="page-header">
+      <h1>Venue Owner Dashboard</h1>
+      <p>Manage your venues, courts, and bookings.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">My Venues</div>
+        <div class="stat-value text-accent" th:text="${#lists.size(venues)}">0</div>
+        <div class="stat-sub">Total listed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Bookings</div>
+        <div class="stat-value" th:text="${totalBookings}">0</div>
+        <div class="stat-sub">All venues combined</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Owner ID</div>
+        <div class="stat-value" style="font-size:1rem;" th:text="${owner.userId}">USR-XXX</div>
+        <div class="stat-sub" th:text="${owner.email}">email</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h3 class="mb-2">Quick Actions</h3>
+        <div class="flex gap-2">
+          <a th:href="@{/owner/venue/add}" class="btn btn-primary">➕ Add New Venue</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Venues -->
+    <h2 class="mb-3">My Venues</h2>
+    <div class="venues-grid">
+      <div th:each="venue : ${venues}" class="venue-card">
+        <img th:src="${venue.imageUrl}" th:alt="${venue.name}" class="venue-card-img"
+             onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800'"/>
+        <div class="venue-card-body">
+          <div class="venue-card-name" th:text="${venue.name}">Name</div>
+          <div class="venue-card-city">📍 <span th:text="${venue.city}">City</span></div>
+          <div class="flex gap-1 mt-1">
+            <span class="badge" th:classappend="${venue.verified} ? 'badge-green' : 'badge-yellow'"
+                  th:text="${venue.verified} ? '✓ Verified' : '⏳ Pending'">Status</span>
+          </div>
+
+          <!-- Action Links -->
+          <div class="flex gap-1 mt-2" style="flex-wrap:wrap;">
+            <a th:href="@{/owner/venue/{id}/courts(id=${venue.venueId})}"
+               class="btn btn-outline btn-sm">Courts</a>
+            <a th:href="@{/owner/venue/{id}/bookings(id=${venue.venueId})}"
+               class="btn btn-gray btn-sm">Bookings</a>
+            <a th:href="@{/owner/venue/{id}/reports(id=${venue.venueId})}"
+               class="btn btn-gray btn-sm">Reports</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(venues)}"
+         style="text-align:center; padding:64px; color:var(--gray-400);">
+      <p style="font-size:2rem; margin-bottom:12px;">🏟️</p>
+      <h3 style="color:var(--gray-600); margin-bottom:8px;">No venues yet</h3>
+      <p>Add your first venue to start accepting bookings.</p>
+      <a th:href="@{/owner/venue/add}" class="btn btn-primary mt-2">Add Venue</a>
+    </div>
+  </div>
+</main>
+
+<footer><p>© 2025 <span style="color:var(--accent);">SportX</span></p></footer>
+</body>
+</html>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${venue.name + ' — SportX'}">Venue — SportX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="page-wrapper">
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a th:href="@{/}" class="navbar-brand">⚡ Sport<span>X</span></a>
+    <ul class="navbar-nav">
+      <li><a th:href="@{/venues}" class="nav-link">← All Venues</a></li>
+      <li sec:authorize="isAnonymous()"><a th:href="@{/auth/login}" class="btn btn-primary btn-sm">Login to Book</a></li>
+      <li sec:authorize="isAuthenticated()"><a th:href="@{/auth/logout}" class="btn btn-gray btn-sm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="card mb-3" style="overflow:hidden;">
+      <img th:src="${venue.imageUrl}" th:alt="${venue.name}"
+           style="width:100%; height:300px; object-fit:cover;"
+           onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800'"/>
+      <div class="card-body">
+        <div class="flex-between">
+          <div>
+            <h1 th:text="${venue.name}">Venue</h1>
+            <p>📍 <span th:text="${venue.address}">Address</span>, <span th:text="${venue.city}">City</span></p>
+            <div class="flex gap-1 mt-1">
+              <span th:each="s : ${venue.sportTypes}" class="sport-tag" th:text="${s}">Sport</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div class="rating" style="justify-content:flex-end;">
+              <span class="stars">★</span>
+              <span class="rating-num" th:text="${#numbers.formatDecimal(venue.avgRating,1,1)}">4.5</span>
+            </div>
+            <span class="badge badge-green mt-1" th:if="${venue.verified}">✓ Verified</span>
+          </div>
+        </div>
+        <p class="mt-2" th:text="${venue.description}">Description</p>
+
+        <!-- CTA for non-players -->
+        <div sec:authorize="!hasRole('PLAYER')" style="margin-top:20px; padding:16px;
+             background:var(--accent-pale); border-radius:var(--radius-sm);">
+          <p style="color:var(--accent-dark); font-weight:600; margin-bottom:10px;">
+            Sign up or log in to book a slot at this venue.
+          </p>
+          <div class="flex gap-2">
+            <a th:href="@{/auth/register}" class="btn btn-primary btn-sm">Create Account</a>
+            <a th:href="@{/auth/login}" class="btn btn-outline btn-sm">Login</a>
+          </div>
+        </div>
+
+        <div sec:authorize="hasRole('PLAYER')" style="margin-top:20px;">
+          <a th:href="@{/player/venue/{id}(id=${venue.venueId})}"
+             class="btn btn-primary btn-lg">View Available Slots →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><p>© 2025 <span style="color:var(--accent);">SportX</span></p></footer>
+</body>
+</html>
+

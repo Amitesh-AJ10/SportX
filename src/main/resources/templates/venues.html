@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Browse Venues — SportX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="page-wrapper">
+<nav class="navbar">
+  <div class="container navbar-inner">
+    <a th:href="@{/}" class="navbar-brand">⚡ Sport<span>X</span></a>
+    <ul class="navbar-nav">
+      <li><a th:href="@{/venues}" class="nav-link active">Browse Venues</a></li>
+      <li sec:authorize="isAnonymous()"><a th:href="@{/auth/login}" class="btn btn-outline btn-sm">Login</a></li>
+      <li sec:authorize="isAnonymous()"><a th:href="@{/auth/register}" class="btn btn-primary btn-sm">Sign Up</a></li>
+      <li sec:authorize="isAuthenticated()"><a th:href="@{/auth/logout}" class="btn btn-gray btn-sm">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="page-header">
+      <h1>Browse Venues</h1>
+      <p>Explore verified sports venues and book your court.</p>
+    </div>
+
+    <!-- Search -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form th:action="@{/venues}" method="get">
+          <div class="grid-3" style="align-items:end;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">City</label>
+              <input type="text" name="city" class="form-control"
+                     placeholder="e.g. Bangalore" th:value="${selectedCity}"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Sport</label>
+              <select name="sport" class="form-control">
+                <option value="">All Sports</option>
+                <option th:each="s : ${sportTypes}" th:value="${s}" th:text="${s}"
+                        th:selected="${s == selectedSport}">Sport</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="flex-between mb-3">
+      <p><strong th:text="${#lists.size(venues)}">0</strong> venues found</p>
+    </div>
+
+    <div class="venues-grid">
+      <div th:each="venue : ${venues}" class="venue-card">
+        <img th:src="${venue.imageUrl}" th:alt="${venue.name}" class="venue-card-img"
+             onerror="this.src='https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800'"/>
+        <div class="venue-card-body">
+          <div class="venue-card-name" th:text="${venue.name}">Name</div>
+          <div class="venue-card-city">📍 <span th:text="${venue.address}">Address</span>, <span th:text="${venue.city}">City</span></div>
+          <div class="venue-card-tags">
+            <span th:each="sport : ${venue.sportTypes}" class="sport-tag" th:text="${sport}">Sport</span>
+          </div>
+          <div class="venue-card-footer">
+            <div class="rating">
+              <span class="stars">★</span>
+              <span class="rating-num" th:text="${#numbers.formatDecimal(venue.avgRating,1,1)}">4.5</span>
+            </div>
+            <!-- Logged-in players go to booking flow; others go to login -->
+            <a sec:authorize="hasRole('PLAYER')"
+               th:href="@{/player/venue/{id}(id=${venue.venueId})}"
+               class="btn btn-primary btn-sm">Book Now</a>
+            <a sec:authorize="!hasRole('PLAYER')"
+               th:href="@{/auth/login}"
+               class="btn btn-outline btn-sm">Login to Book</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(venues)}"
+         style="text-align:center; padding:64px; color:var(--gray-400);">
+      <p style="font-size:2rem;">🏟️</p>
+      <h3 style="color:var(--gray-600); margin:12px 0 8px;">No venues found</h3>
+      <p>Try a different city or sport.</p>
+    </div>
+  </div>
+</main>
+
+<footer><p>© 2025 <span style="color:var(--accent);">SportX</span></p></footer>
+</body>
+</html>
+
