@@ -1,64 +1,103 @@
-# SportX — Sports Venue Booking System
+# SportX - Sports Venue Booking System
 
-A web application to discover and book sports courts (Badminton, Football, Tennis, Cricket, Swimming).
+SportX is a comprehensive web application designed to bridge the gap between sports enthusiasts and sports facility owners. It provides a seamless platform for players to search and book slots at various sports venues (Badminton, Football, Cricket, Tennis, etc.), while allowing venue owners to manage their facilities, courts, and bookings efficiently.
 
-Built with **Spring Boot MVC + Thymeleaf + H2 Database**.
+## Core Features
 
----
+### Authentication and Authorization
+- Secure Login and Registration for three distinct roles: Player, Venue Owner, and Admin.
+- Role-based access control (RBAC) ensuring users only see what they are authorized to access.
 
-## How to Run
+### Player Module
+- Search and Filter: Find venues by city and sport type.
+- Venue Details: View facility descriptions, amenities, high-quality images, and ratings.
+- Slot Booking: Real-time availability check and booking for specific time slots.
+- My Bookings: Track upcoming and past bookings.
+- Profile Management: Update personal information.
+- Notifications: Receive updates about booking confirmations and cancellations.
+
+### Venue Owner Module
+- Venue Management: Register and manage sports facilities.
+- Court and Slot Management: Add multiple courts per venue and define availability slots with custom pricing.
+- Dashboard: Real-time overview of bookings and revenue.
+- Reports: Gain insights into facility utilization and performance.
+
+### Admin Module
+- Dashboard: High-level overview of the entire system (users, venues, bookings).
+- User Management: Oversee all registered users.
+- Venue Verification: Verify and approve new venues to ensure quality and authenticity on the platform.
+
+## Technologies Used
+
+### Backend
+- Java 17
+- Spring Boot 3.5.12
+- Spring Data JPA
+- Spring Security
+- Spring Validation
+- Hibernate
+- H2 In-Memory Database (Development)
+
+### Frontend
+- Thymeleaf (Template Engine)
+- Bootstrap (Styling)
+- HTML5 / CSS3
+
+### Development Tools
+- Maven (Build Tool)
+- Lombok (Code Simplification)
+
+## Getting Started
 
 ### Prerequisites
-- Java 17 — [Download](https://adoptium.net/)
-- Maven (comes bundled via `./mvnw`)
+- Java Development Kit (JDK) 17 or higher
+- Apache Maven 3.6 or higher
 
-### Steps
+### Installation Steps
 
-```bash
-# 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/sportx.git
-cd sportx
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd sportx
+   ```
 
-# 2. Run the app
-./mvnw spring-boot:run
+2. Build the project using the Maven Wrapper:
+   ```bash
+   chmod +x mvnw
+   ./mvnw clean install
+   ```
 
-# 3. Open in browser
-http://localhost:8080
-```
+3. Run the application:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
 
----
+4. Access the application:
+   Open your browser and navigate to `http://localhost:8080`
 
-## Demo Logins
+### Default Credentials
+
+The application is pre-seeded with demo data for testing:
 
 | Role | Email | Password |
-|------|-------|----------|
-| Player | player@sportx.com | player123 |
-| Venue Owner | owner@sportx.com | owner123 |
+| :--- | :--- | :--- |
 | Admin | admin@sportx.com | admin123 |
+| Venue Owner | owner@sportx.com | owner123 |
+| Player | player@sportx.com | player123 |
 
----
-
-## Tech Stack
-
-- **Backend** — Spring Boot 3.5, Spring MVC, Spring Security, Spring Data JPA
-- **Frontend** — Thymeleaf, HTML/CSS
-- **Database** — H2 (in-memory, resets on restart)
-
----
+### Database Console
+You can access the H2 console at `http://localhost:8080/h2-console`:
+- JDBC URL: `jdbc:h2:mem:sportxdb`
+- Username: `sa`
+- Password: (leave blank)
 
 ## Project Structure
 
-```
-src/main/java/com/sportx/
-├── config/        # Security, Factory, Payment Strategy
-├── controller/    # MVC Controllers
-├── model/         # JPA Entities + Enums
-├── repository/    # Spring Data Repositories
-├── service/       # Business Logic
-└── dto/           # Data Transfer Objects
-
-src/main/resources/
-├── templates/     # Thymeleaf HTML pages
-├── static/css/    # Stylesheet
-└── application.properties
-```
+- `com.sportx.config`: Security and data initialization configurations.
+- `com.sportx.controller`: Role-specific web controllers.
+- `com.sportx.model`: JPA entities (User, Player, VenueOwner, Admin, Venue, Court, Slot, Booking).
+- `com.sportx.repository`: Spring Data JPA repositories.
+- `com.sportx.service`: Business logic layer.
+- `com.sportx.dto`: Data Transfer Objects for registration and requests.
+- `src/main/resources/templates`: Thymeleaf HTML views.
+- `src/main/resources/static`: CSS, JavaScript, and images.
